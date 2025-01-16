@@ -1,14 +1,19 @@
 import { Link, useNavigate} from "react-router-dom"
 import { Label, TextInput, Button, Alert, Spinner } from "flowbite-react"
 import { useState } from "react"
+import {useDispatch, useSelector} from 'react-redux'
+import { signInStart, signInSuccess, signInFailure } from "../redux/user/userSlice"
 
 const SignIn = () => {
 
   const [formData, setFormData] = useState({});
-  const [errorMessage, setErrorMessage] = useState(null);
-  const [loading, setLoading] = useState(false);
+  // const [errorMessage, setErrorMessage] = useState(null);
+  // const [loading, setLoading] = useState(false);
+  const {loading, error : errorMessage} = useSelector((state) => state.user);
   
   const navigate = useNavigate();
+  // dispatch is generally used to use the redux logic inside our code as follows..
+  const dispatch = useDispatch();
 
   // handle change function 
   const handleChange = (e) => {
@@ -20,12 +25,15 @@ const SignIn = () => {
 
     // validating form data.
     if(!formData.email || !formData.password){
-      return setErrorMessage('Please fill out all feilds');
+      return dispatch(signInFailure('Please fill all the feilds'));
     }
 
     try {
-      setLoading(true);
-      setErrorMessage(null);
+      // setLoading(true);
+      // setErrorMessage(null);
+
+      // redux toolkit.
+      dispatch(signInStart());
       const res = await fetch('/api/auth/sign-in', {
         method : "POST",
         headers : { 'Content-Type':'application/json'},
@@ -33,15 +41,18 @@ const SignIn = () => {
       });
       const data = await res.json();
       if(data.success === false){
-        return setErrorMessage("User Already Exist");
+        // return setErrorMessage("User Already Exist");
+        dispatch(signInFailure(data.message));
       }
-      setLoading(false);
+
       if(res.ok){
+        dispatch(signInSuccess(data));
         navigate('/');
       }
     } catch(error){
-        setErrorMessage(error.message);
-        setLoading(false);
+        // setErrorMessage(error.message);
+        // setLoading(false);
+        dispatch(signInFailure(error.message));
     }
   }
   return (
