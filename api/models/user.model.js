@@ -5,18 +5,18 @@ import mongoose from 'mongoose';
 const userSchema = new mongoose.Schema({
     userName : {
         type : String,
-        required : true,
+        required: [true, "User name is required"],
         unique : true,
     },
 
     email : {
         type : String,
-        required : true,
+        required: [true, "Email is required"],
         unique : true,
     },
     password : {
         type : String,
-        required : true,
+        required: [true, "Password is required"],
     },
 }, {timestamps: true}
 
