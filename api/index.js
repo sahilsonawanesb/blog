@@ -11,7 +11,7 @@ const app = express();
 
 app.use(express.json());
 
-// connect to the database now
+// connecting to the database 
 mongoose
     .connect(process.env.MONGO_URL)
     .then(() => {
@@ -30,3 +30,16 @@ app.use('/api/auth', authRoutes);
 
 // user's Router
 app.use('/api/user', userRoutes);
+
+// creating the middleware for handling rh error.
+app.use((err, req, res, next) => {
+
+    const statusCode = err.statusCode || 500;
+    const message  = err.message || 'Internal Server Error';
+
+    res.status(statusCode).json({
+        success : false,
+        statusCode,
+        message
+    });
+});
