@@ -1,9 +1,10 @@
 import User from "../models/user.model.js";
 import bcryptjs from "bcryptjs";
 import { errorHandler } from "../utils/error.js";
+import jwt from "jsonwebtoken";
 
 // controller function for sign-up
-const signUp = async(req, res, next) => {
+export const signUp = async(req, res, next) => {
    const {userName, email, password} = req.body;
 
    if (!userName?.trim() || !email?.trim() || !password?.trim()) {
@@ -27,5 +28,40 @@ const signUp = async(req, res, next) => {
 
 }
 
+// controller function for sign-in
+export const signIn = async(req, res, next) => {
+   const {email, password} = req.body;
 
-export default signUp;
+   if(!email.trim() || !password.trim() || email === '' || password === ''){
+      next(errorHandler(400, 'All feilds are required'));
+   }
+
+   try {
+      // first validate the user
+      const validUser = await User.findOne({email});
+      if(!validUser){
+         next(errorHandler(400, 'User not found'));
+      }
+      const validPassword = bcryptjs.compareSync(password, validUser.password);
+      if(!validPassword){
+         return next(errorHandler(400, 'Invalid Password')); 
+      }
+      // JWT token
+      const token = jwt.sign({ id : validUser?._id}, process.env.JWT_SECRET);
+
+      // seperation and hiding the password from the enduser
+      const {password : pass, ...rest } = validUser._doc;
+      
+      // console.log(token)
+     res.status(200).cookie('access_token', token, {
+         httpOnly : true
+      }).json(rest);
+  
+   } catch (error) {
+      next(error)
+   }   
+   
+}
+
+
+export default {signUp, signIn};
