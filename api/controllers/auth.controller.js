@@ -63,5 +63,46 @@ export const signIn = async(req, res, next) => {
    
 }
 
+// controller function for googleAuth..
+export const goolge = async(req, res, next) => {
+   const {email, name, googlePhotoUrl} = req.body;
 
-export default {signUp, signIn};
+   try{
+      const user = await User.findOne({email});
+
+      // if user exist
+      if(user){
+         const token = jwt.sign({id : user._id}, process.env.JWT_SECRET);
+         const {password, ...rest} = user._doc;
+         res.status(200).cookie('access_token', token, {
+            httpOnly : true
+         }).json(rest);
+      }else{
+         const generatedPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+         const hashedPassword = bcryptjs.hashSync(generatedPassword, 10);
+         // creating new user 
+         const newUser = new User({
+            userName : name.toLowerCase().split(' ').join('') + Math.random().toString(9).slice(-4),
+            email,
+            password : hashedPassword,
+            profilePicture : googlePhotoUrl
+         });
+
+         await newUser.save();
+         const token = jwt.sign({id : newUser._id}, process.env.JWT_SECRET);
+         const {password, ...rest} = newUser._doc;
+
+         res
+            .status(200)
+            .cookie('access_token', token, {
+               httpOnly : true
+            }).json(rest);
+      }
+   }catch(error){
+      next(error);
+   }
+
+}
+
+
+export default {signUp, signIn, goolge};
