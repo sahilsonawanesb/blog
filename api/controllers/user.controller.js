@@ -49,5 +49,20 @@ export const updateUser = async(req, res, next) => {
         }catch(error){
             next(error);
         }
+}
+
+// Controller function for deleting the user 
+export const deleteUser = async(req, res, next) => {
+    // check if the user is allowed to delete the account or not
+    if(req.user.id !== req.params.userId){
+        return next(errorHandler('You are not allowed to delete this user account'));
     }
+
+    try{
+        await User.findByIdAndDelete(req.params.userId);
+        res.status(200).json('User has been Deleted');
+    }catch(error){
+        next(error);
+    }
+}
     
