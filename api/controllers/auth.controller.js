@@ -46,6 +46,7 @@ export const signIn = async(req, res, next) => {
       if(!validPassword){
          return next(errorHandler(400, 'Invalid Password')); 
       }
+
       // JWT token
       const token = jwt.sign({ id : validUser?._id, isAdmin : validUser.isAdmin}, process.env.JWT_SECRET);
 
