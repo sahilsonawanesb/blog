@@ -47,7 +47,7 @@ export const signIn = async(req, res, next) => {
          return next(errorHandler(400, 'Invalid Password')); 
       }
       // JWT token
-      const token = jwt.sign({ id : validUser?._id}, process.env.JWT_SECRET);
+      const token = jwt.sign({ id : validUser?._id, isAdmin : validUser.isAdmin}, process.env.JWT_SECRET);
 
       // seperation and hiding the password from the enduser
       const {password : pass, ...rest } = validUser._doc;
@@ -72,7 +72,7 @@ export const goolge = async(req, res, next) => {
 
       // if user exist
       if(user){
-         const token = jwt.sign({id : user._id}, process.env.JWT_SECRET);
+         const token = jwt.sign({id : user._id, isAdmin : validUser.isAdmin}, process.env.JWT_SECRET);
          const {password, ...rest} = user._doc;
          res.status(200).cookie('access_token', token, {
             httpOnly : true
@@ -89,7 +89,7 @@ export const goolge = async(req, res, next) => {
          });
 
          await newUser.save();
-         const token = jwt.sign({id : newUser._id}, process.env.JWT_SECRET);
+         const token = jwt.sign({id : newUser._id, isAdmin : newUser.isAdmin}, process.env.JWT_SECRET);
          const {password, ...rest} = newUser._doc;
 
          res
