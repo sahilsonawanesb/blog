@@ -14,14 +14,14 @@ export const create = async(req, res, next) => {
         return next(errorHandler(404, 'Please Provide all required feilds'));
     }
 
-    const slug = req.body.title.split(' ').join('-').toLowerCase().replace(/[^a-zA-Z0-9-]/g, '');
+    const slug = req.body.title.split(' ').join('-').toLowerCase().replace(/[^a-zA-Z0-9-]/g, '-');
     const newPost = new Post({
         ...req.body, slug, userId : req.user.id
     });
 
     try{
         const savedPost = await newPost.save();
-        res.status(400).json({
+        res.status(200).json({
             savedPost
         });
     }catch(error){
