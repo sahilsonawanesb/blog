@@ -1,6 +1,8 @@
 import { errorHandler } from "../utils/error.js";
 import Post from '../models/post.modal.js';
 
+
+// controller function for creating new post.
 export const create = async(req, res, next) => {
 
     // check is user is allowed to create a post or not
