@@ -54,7 +54,7 @@ export const updateUser = async(req, res, next) => {
 // Controller function for deleting the user 
 export const deleteUser = async(req, res, next) => {
     // check if the user is allowed to delete the account or not
-    if(req.user.id !== req.params.userId){
+    if(!req.user.isAdmin && req.user.id !== req.params.userId){
         return next(errorHandler('You are not allowed to delete this user account'));
     }
 
