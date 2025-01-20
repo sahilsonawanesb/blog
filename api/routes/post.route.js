@@ -1,6 +1,6 @@
 import express from 'express';
 import { verifyUser } from '../utils/verifyUser.js';
-import { create, getPosts, deletePost } from '../controllers/post.controller.js';
+import { create, getPosts, deletePost, updatePost } from '../controllers/post.controller.js';
 
 const router = express.Router();
 
@@ -12,5 +12,8 @@ router.get('/getposts', getPosts);
 
 // created route for deleting the POST
 router.delete('/deletepost/:postId/:userId', verifyUser, deletePost);
+
+// created route for updating the POST
+router.put('/update-post/:postId/:userId', verifyUser, updatePost);
 
 export default router;
