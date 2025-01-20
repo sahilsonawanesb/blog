@@ -2,6 +2,7 @@ import {useParams, Link} from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Spinner, Button } from 'flowbite-react';
 import CallToAction from "../components/CallToAction";
+import CommetSection from "../components/CommetSection";
 
 function PostPage() {
 
@@ -68,6 +69,7 @@ const [post, setPost] = useState(null);
         <div className="max-w-4xl mx-auto w-full">
             <CallToAction />
         </div>
+       <CommetSection postId = {post._id}/> 
      </main>
     )
 }
