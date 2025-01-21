@@ -2,6 +2,9 @@ import { errorHandler } from "../utils/error.js";
 import Comment from "../models/comment.modal.js"
 
 
+
+
+// controller function for creating new Comment
 export const createComment = async(req, res, next) => {
 
     try{
@@ -23,4 +26,18 @@ export const createComment = async(req, res, next) => {
     } catch(error){ 
         next(error);
     }
-}
+};
+
+// controller function for getting Comments
+export const getComments = async(req, res, next) => {
+
+    try{
+        const comments = await Comment.find({postId : req.params.postId}).sort({
+            createdAt:-1,
+        });
+        res.status(200).json(comments);
+        console.log(comments);
+    }catch(error){
+        next(error);
+    }
+};

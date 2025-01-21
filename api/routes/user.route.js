@@ -1,5 +1,5 @@
 import express from 'express';
-import {test, updateUser, deleteUser, signOut, getUsers} from "../controllers/user.controller.js";
+import {test, updateUser, deleteUser, signOut, getUsers, getUser} from "../controllers/user.controller.js";
 import { verifyUser } from '../utils/verifyUser.js';
 
 // create routes for testing the user api
@@ -16,5 +16,7 @@ router.delete('/delete/:userId', verifyUser, deleteUser);
 router.post('/signout', signOut);
 // created route for getting user information
 router.get('/getusers', verifyUser, getUsers);
+// created route for getting the particular users.
+router.get('/:userId', getUser);
 
 export default router;
