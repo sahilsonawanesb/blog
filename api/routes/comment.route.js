@@ -1,5 +1,5 @@
 import express from 'express';
-import { createComment, getComments, likeComment, editComment, deleteComment } from '../controllers/comment.controller.js';
+import { createComment, getComments, likeComment, editComment, deleteComment, getcomments } from '../controllers/comment.controller.js';
 import {verifyUser} from "../utils/verifyUser.js";
 
 const router = express.Router();
@@ -18,5 +18,8 @@ router.put('/editComment/:commentId', verifyUser, editComment);
 
 // created route for delete functionality
 router.delete('/deleteComment/:commentId', verifyUser, deleteComment);
+
+// created route for showing no of comments in the dashboard
+router.get('/getcomments', verifyUser, getcomments);
 
 export default router;
