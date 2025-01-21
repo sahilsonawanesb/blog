@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Spinner, Button } from 'flowbite-react';
 import CallToAction from "../components/CallToAction";
 import CommetSection from "../components/CommetSection";
+import PostCard from "../components/PostCard";
 
 function PostPage() {
 
@@ -10,8 +11,9 @@ const {postSlug} = useParams();
 const [loading, setLoading] = useState(true);
 const [error, setError] = useState(false);
 const [post, setPost] = useState(null);
+const [recentPosts, setRecentPosts] = useState(null);
 
-
+console.log(recentPosts);
 
     useEffect(() => {
        const fetchPost = async() => {
@@ -36,6 +38,25 @@ const [post, setPost] = useState(null);
        };
        fetchPost();
     }, [postSlug]);
+
+
+    useEffect(() => {
+        const fetchRecentPosts = async() => {
+           try{
+            const res = await fetch(`/api/post/getposts?limit=3`);
+                const data = await res.json();
+
+                if(res.ok){
+                    setRecentPosts(data.posts);
+                };
+           }catch(error){
+            console.log(error);
+           } 
+        }
+        fetchRecentPosts();
+    }, [])
+
+    
 
     if(loading) return (
         <>
@@ -70,6 +91,17 @@ const [post, setPost] = useState(null);
             <CallToAction />
         </div>
        <CommetSection postId = {post._id}/> 
+       <div className="flex flex-col justify-center items-center mb-5">
+            <h1 className="text-2xl mt-5 font-semibold"> Recent Article </h1>
+            <div className="flex flex-wrap gap-5 justify-center mt-10">
+                    {
+                        recentPosts && 
+                            recentPosts.map((post) => (
+                                <PostCard key={post._id} post={post}/>
+                            ))
+                    }
+            </div>
+       </div>
      </main>
     )
 }
