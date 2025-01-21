@@ -1,5 +1,5 @@
 import express from 'express';
-import { createComment, getComments, likeComment } from '../controllers/comment.controller.js';
+import { createComment, getComments, likeComment, editComment } from '../controllers/comment.controller.js';
 import {verifyUser} from "../utils/verifyUser.js";
 
 const router = express.Router();
@@ -12,5 +12,8 @@ router.get('/getPostComments/:postId', getComments);
 
 // created route for like comments
 router.put('/likeComment/:commentId', verifyUser, likeComment);
+
+// created route for edit comments
+router.put('/editComment/:commentId', verifyUser, editComment);
 
 export default router;
