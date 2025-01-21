@@ -1,9 +1,10 @@
 /* eslint-disable react/prop-types */
 import {useSelector} from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
-import {Textarea, Button, Alert} from 'flowbite-react';
+import {Textarea, Button, Alert, Modal} from 'flowbite-react';
 import { useState, useEffect } from 'react';
 import Comment from './Comment';
+import {HiOutlineExclamationCircle} from 'react-icons/hi';
 
 function CommetSection({postId}) {
 
@@ -11,6 +12,8 @@ function CommetSection({postId}) {
     const [comment, setComment] = useState('');
     const [commentError, setCommentError] = useState(null);
     const [comments, setComments] = useState([]);
+    const [showModal, setShowModal] = useState(false);
+    const [commentToDelete, setCommentToDelete] = useState(null);
 
     const navigate = useNavigate();
 
@@ -74,7 +77,7 @@ function CommetSection({postId}) {
                     comment._id === commentId ? {
                         ...comment,
                         likes : data.likes,
-                        numberOfLikes : data.likes.length
+                        numberOflikes : data.likes.length
                     } : comment
                 ))
             }
@@ -87,6 +90,28 @@ function CommetSection({postId}) {
         setComments(comments.map((c) => 
             c._id === comment._id ? { ...c, content : editedContent} : c
         ))
+    };
+
+    const handleDelete = async(commentId) => {
+        setShowModal(false);
+        try{
+            if(!currentUser){
+                navigate('/signIn');
+                return;
+            }
+
+            const res = await fetch(`/api/comment/deleteComment/${commentId}`, {
+                method : "DELETE"
+            });
+
+            if(res.ok){
+                const data = await res.json();
+                setComments(comments.filter((comment) => comment._id !== commentId));
+                  
+            }
+        }catch(error){
+            console.log(error);
+        }
     };
   return (
     <div className='max-w-2xl mx-auto w-full p-3 '>
@@ -160,11 +185,41 @@ function CommetSection({postId}) {
                                 comment = {comment}
                                 onLike = {handleLike}
                                 onEdit = {handleEdit}
+                                onDelete={(commentId) => {
+                                    setShowModal(true)
+                                    setCommentToDelete(commentId);
+                                }}
                             />
                         ))
                     }
                 </>
             )}
+             {/* Delete Comments Modal */}
+             <Modal 
+                        show={showModal} 
+                        onClose={() => setShowModal(false)}
+                        popup
+                        size='md'
+                        >
+                         <Modal.Header />
+                         <Modal.Body>
+                            <div className="text-center">
+                                {/* icon */}
+                                <HiOutlineExclamationCircle className='h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto'/>
+                                <h3 className='mb-5 text-lg tex-gray-500'>Are you sure you want to delete this comment</h3>
+                                <div className='flex justify-center gap-4 mb-4'>
+                                    <Button color='failure' onClick={() => handleDelete(commentToDelete)}>
+                                        Yes, I&apos;m sure
+                                    </Button>
+                
+                                    <Button color='gray' onClick={() => setShowModal(false)}>
+                                        Cancel
+                                    </Button>
+                                </div>
+                            </div>
+                         </Modal.Body>
+                
+                        </Modal>
     </div>
   )
 }
