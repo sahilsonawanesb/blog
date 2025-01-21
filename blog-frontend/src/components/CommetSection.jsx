@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import {useSelector} from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {Textarea, Button, Alert} from 'flowbite-react';
 import { useState, useEffect } from 'react';
 import Comment from './Comment';
@@ -11,6 +11,8 @@ function CommetSection({postId}) {
     const [comment, setComment] = useState('');
     const [commentError, setCommentError] = useState(null);
     const [comments, setComments] = useState([]);
+
+    const navigate = useNavigate();
 
     // console.log(comments);
     const handleSubmit = async(e) => {
@@ -54,6 +56,32 @@ function CommetSection({postId}) {
         }
         getComments();
     }, [postId]);
+
+    const handleLike = async(commentId) => {
+        try{
+            if(!currentUser){
+                navigate('/signIn');
+                return;
+            }
+
+            const res = await fetch(`/api/comment/likeComment/${commentId}`, {
+                method : 'PUT', 
+            });
+
+            if(res.ok){
+                const data = await res.json();
+                setComments(comments.map((comment) => 
+                    comment._id === commentId ? {
+                        ...comment,
+                        likes : data.likes,
+                        numberOfLikes : data.likes.length
+                    } : comment
+                ))
+            }
+        }catch(error){
+            console.log(error.message);
+        }
+    };
   return (
     <div className='max-w-2xl mx-auto w-full p-3 '>
         {currentUser ? (
@@ -124,6 +152,7 @@ function CommetSection({postId}) {
                             <Comment 
                                 key={comment._id}
                                 comment = {comment}
+                                onLike = {handleLike}
                             />
                         ))
                     }
