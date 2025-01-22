@@ -31,6 +31,8 @@ JWT_SECRET = Your JWT Secrect Key
 This project is a **MERN stack-based blogging platform** with a responsive frontend built using **React.js** and styled with **Tailwind CSS**. The application includes essential pages and functionalities for user interaction, content management, and authentication.
 
 ---
+### Live Demo 
+https://sahils-blogs-wvx5.onrender.com/
 
 ### Project Setup  
 1. **Folder Structure & Initialization:**  
@@ -50,7 +52,9 @@ Implemented multiple pages with React Router for navigation:
 2. **About Us:** Information about the platform's purpose and creators.  
 3. **Projects:** Showcases blog posts or articles.  
 4. **Dashboard:** User-specific dashboard for managing content.  
-5. **Sign In & Sign Up:** Authentication pages for user login and registration.  
+5. **Sign In & Sign Up:** Authentication pages for user login and registration.
+
+
 
 
 
